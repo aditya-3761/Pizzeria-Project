@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizzeria - Payment</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="logo">
+                <img src="pizzalogo.png" alt="Pizzeria Logo">
+                <a href="home.html" class="site-name">Pizzeria</a>
+            </div>
+            <div class="nav-links">
+                <a href="home.html">Home</a>
+                <a href="#">Location</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="cart.html">Cart</a>
+                <a href="order.html">Orders</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>Payment Options</h1>
+        <div class="order-summary">
+            <h3>Order Summary</h3>
+            <p>Your total is: <span id="payment-total"></span></p>
+        </div>
+
+        <div class="payment-options-container">
+            <h3>Choose a Payment Method</h3>
+            <div class="payment-option-grid">
+                <button class="btn btn-payment" id="razorpay-btn">Pay with Razorpay</button>
+                <button class="btn btn-payment" id="cod-btn">Cash on Delivery</button>
+            </div>
+        </div>
+        <a href="cart.html" class="btn btn-secondary" style="margin-top: 20px;">Back to Cart</a>
+    </div>
+
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

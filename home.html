@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizzeria - Home</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="logo">
+                <img src="pizzalogo.png" alt="Pizzeria Logo">
+                <a href="home.html" class="site-name">Pizzeria</a>
+            </div>
+            <div class="location-container">
+                <div class="location-input-wrapper">
+                    <input type="text" placeholder="Enter your location" class="location-input">
+                    <button class="detect-location-btn" onclick="detectLocation()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#FF5722" viewBox="0 0 256 256">
+                            <path d="M128,64a44,44,0,1,0,44,44A44,44,0,0,0,128,64Zm0,64a20,20,0,1,1,20-20A20,20,0,0,1,128,128Zm0-104A104,104,0,0,0,24,128c0,42.4,36,96,104,96s104-53.6,104-96A104,104,0,0,0,128,24Zm0,176c-31,0-63.1-27.7-76.3-63.1a88,88,0,0,1,152.6,0C191.1,172.3,159,200,128,200Z"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+            <div class="nav-links">
+                <a href="home.html">Home</a>
+                <a href="login.html">Login</a>
+                <a href="registration.html">Register</a>
+            </div>
+        </div>
+    </nav>
+    <div class="hero-section">
+        <img src="pizza1.jpg" alt="Delicious Pizza">
+        <div class="hero-text">
+            <h1>Welcome to Pizzeria</h1>
+            <p>The best place to create your perfect custom pizza. Fresh ingredients, incredible taste, and endless options.</p>
+            <a href="login.html" class="btn btn-primary">Order Now</a>
+        </div>
+    </div>
+
+    <div class="outlets-container">
+        <div class="outlet-card">
+            <h3>Delhi Outlet</h3>
+            <p>Serving fresh pizzas daily!</p>
+        </div>
+        <div class="outlet-card">
+            <h3>Noida Outlet</h3>
+            <p>Find us in Sector 18</p>
+        </div>
+        <div class="outlet-card">
+            <h3>Ghaziabad Outlet</h3>
+            <p>Your favorite pizza spot</p>
+        </div>
+        <div class="outlet-card">
+            <h3>Gurgaon Outlet</h3>
+            <p>Pizza, pasta, and more!</p>
+        </div>
+    </div>
+</body>
+</html>

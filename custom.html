@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizzeria - Customize Your Pizza</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="logo">
+                <img src="pizzalogo.png" alt="Pizzeria Logo">
+                <a href="home.html" class="site-name">Pizzeria</a>
+            </div>
+            <div class="nav-links">
+                <a href="home.html">Home</a>
+                <a href="#">Location</a>
+                <a href="dashboard.html">Dashboard</a>
+                <a href="order.html">Orders</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>Create Your Pizza</h1>
+        <div class="options-list">
+            <div class="option-group">
+                <h3>Choose a Base</h3>
+                <label><input type="radio" name="base" value="Thin Crust" required> Thin Crust</label>
+                <label><input type="radio" name="base" value="Hand Tossed"> Hand Tossed</label>
+                <label><input type="radio" name="base" value="Deep Dish"> Deep Dish</label>
+                <label><input type="radio" name="base" value="Gluten-Free"> Gluten-Free</label>
+                <label><input type="radio" name="base" value="Stuffed Crust"> Stuffed Crust</label>
+            </div>
+            <div class="option-group">
+                <h3>Choose a Sauce</h3>
+                <label><input type="radio" name="sauce" value="Marinara" required> Marinara</label>
+                <label><input type="radio" name="sauce" value="Pesto"> Pesto</label>
+                <label><input type="radio" name="sauce" value="White Garlic"> White Garlic</label>
+                <label><input type="radio" name="sauce" value="BBQ"> BBQ</label>
+                <label><input type="radio" name="sauce" value="Spicy Red"> Spicy Red</label>
+            </div>
+            <div class="option-group">
+                <h3>Choose a Cheese</h3>
+                <label><input type="radio" name="cheese" value="Mozzarella" required> Mozzarella</label>
+                <label><input type="radio" name="cheese" value="Provolone"> Provolone</label>
+                <label><input type="radio" name="cheese" value="Cheddar"> Cheddar</label>
+                <label><input type="radio" name="cheese" value="Feta"> Feta</label>
+                <label><input type="radio" name="cheese" value="Parmesan"> Parmesan</label>
+            </div>
+            <div class="option-group">
+                <h3>Select Veggies (multiple)</h3>
+                <label><input type="checkbox" name="veggie" value="Onions"> Onions</label>
+                <label><input type="checkbox" name="veggie" value="Bell Peppers"> Bell Peppers</label>
+                <label><input type="checkbox" name="veggie" value="Mushrooms"> Mushrooms</label>
+                <label><input type="checkbox" name="veggie" value="Olives"> Olives</label>
+                <label><input type="checkbox" name="veggie" value="Spinach"> Spinach</label>
+                <label><input type="checkbox" name="veggie" value="Tomatoes"> Tomatoes</label>
+            </div>
+        </div>
+        <a href="payment.html" class="btn btn-primary">Proceed to Checkout</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizzeria - Admin Panel</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="logo">
+                <img src="pizzalogo.png" alt="Pizzeria Logo">
+                <a href="home.html" class="site-name">Pizzeria (Admin)</a>
+            </div>
+            <div class="nav-links">
+                <a href="#orders" class="nav-link-admin active">Orders</a>
+                <a href="#inventory" class="nav-link-admin">Inventory</a>
+                <a href="#payments" class="nav-link-admin">Payments</a>
+                <a href="login.html">Logout</a>
+            </div>
+        </div>
+    </nav>
+    <div class="admin-container">
+        <h1>Admin Dashboard</h1>
+
+        <div id="orders" class="admin-content-section" style="display: block;">
+            <h2>Received Orders</h2>
+            <div id="orders-list" class="admin-grid">
+                </div>
+        </div>
+
+        <div id="inventory" class="admin-content-section" style="display: none;">
+            <h2>Pizza Inventory</h2>
+            <table id="inventory-table">
+                <thead>
+                    <tr>
+                        <th>Pizza Variety</th>
+                        <th>Current Stock</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
+
+        <div id="payments" class="admin-content-section" style="display: none;">
+            <h2>Payments Received</h2>
+            <table id="payments-table">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Total Amount</th>
+                        <th>Payment Method</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const ordersList = document.getElementById('orders-list');
+            const inventoryTableBody = document.querySelector('#inventory-table tbody');
+            const paymentsTableBody = document.querySelector('#payments-table tbody');
+            const ordersLink = document.querySelector('a[href="#orders"]');
+            const inventoryLink = document.querySelector('a[href="#inventory"]');
+            const paymentsLink = document.querySelector('a[href="#payments"]');
+            const adminContentSections = document.querySelectorAll('.admin-content-section');
+            
+            // Admin Page Navigation
+            function showSection(sectionId) {
+                adminContentSections.forEach(section => {
+                    section.style.display = 'none';
+                });
+                const targetSection = document.getElementById(sectionId);
+                if (targetSection) {
+                    targetSection.style.display = 'block';
+                }
+            }
+            
+            if (ordersLink) {
+                ordersLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showSection('orders');
+                    ordersLink.classList.add('active');
+                    if (inventoryLink) inventoryLink.classList.remove('active');
+                    if (paymentsLink) paymentsLink.classList.remove('active');
+                    loadOrders();
+                });
+            }
+
+            if (inventoryLink) {
+                inventoryLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showSection('inventory');
+                    if (inventoryLink) inventoryLink.classList.add('active');
+                    if (ordersLink) ordersLink.classList.remove('active');
+                    if (paymentsLink) paymentsLink.classList.remove('active');
+                    loadInventory();
+                });
+            }
+
+            if (paymentsLink) {
+                paymentsLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showSection('payments');
+                    if (paymentsLink) paymentsLink.classList.add('active');
+                    if (ordersLink) ordersLink.classList.remove('active');
+                    if (inventoryLink) inventoryLink.classList.remove('active');
+                    loadPayments();
+                });
+            }
+
+            // Handle order status updates
+            document.body.addEventListener('change', (e) => {
+                if (e.target.classList.contains('status-select')) {
+                    const orderId = e.target.dataset.orderId;
+                    const newStatus = e.target.value;
+                    updateOrderStatus(orderId, newStatus);
+                }
+            });
+
+            // Initial load: show orders by default
+            showSection('orders');
+            if (ordersLink) ordersLink.classList.add('active');
+            loadOrders();
+            
+            // Fetch and display orders
+            async function loadOrders() {
+                try {
+                    const response = await fetch('http://localhost:5000/api/orders');
+                    const orders = await response.json();
+                    if (ordersList) ordersList.innerHTML = '';
+                    if (orders.length === 0) {
+                        if (ordersList) ordersList.innerHTML = '<p class="empty-message">No orders received yet.</p>';
+                        return;
+                    }
+
+                    orders.forEach(order => {
+                        const orderDiv = document.createElement('div');
+                        orderDiv.className = 'order-card';
+                        orderDiv.innerHTML = `
+                            <h3>Order #${order.orderId}</h3>
+                            <p>Total: $${order.total.toFixed(2)}</p>
+                            <p>Date: ${order.date}</p>
+                            <p>Method: ${order.paymentMethod}</p>
+                            <p>Status: 
+                                <select class="status-select" data-order-id="${order.orderId}">
+                                    <option value="Order Received" ${order.status === 'Order Received' ? 'selected' : ''}>Order Received</option>
+                                    <option value="In the Kitchen" ${order.status === 'In the Kitchen' ? 'selected' : ''}>In the Kitchen</option>
+                                    <option value="Sent for Delivery" ${order.status === 'Sent for Delivery' ? 'selected' : ''}>Sent for Delivery</option>
+                                    <option value="Delivered" ${order.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                                </select>
+                            </p>
+                        `;
+                        if (ordersList) ordersList.appendChild(orderDiv);
+                    });
+                } catch (error) {
+                    console.error('Failed to load orders:', error);
+                    if (ordersList) ordersList.innerHTML = '<p>Could not load orders. Please check the server connection.</p>';
+                }
+            }
+
+            // Fetch and display inventory
+            async function loadInventory() {
+                try {
+                    const response = await fetch('http://localhost:5000/api/inventory');
+                    const inventory = await response.json();
+                    if (inventoryTableBody) inventoryTableBody.innerHTML = '';
+                    if (inventory.length === 0) {
+                        if (inventoryTableBody) inventoryTableBody.innerHTML = `<tr><td colspan="2">Inventory is empty. Please run the seeding script.</td></tr>`;
+                        return;
+                    }
+                    inventory.forEach(item => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${item.pizzaName}</td>
+                            <td>${item.quantity}</td>
+                        `;
+                        if (inventoryTableBody) inventoryTableBody.appendChild(row);
+                    });
+                } catch (error) {
+                    console.error('Failed to fetch inventory:', error);
+                    if (inventoryTableBody) inventoryTableBody.innerHTML = `<tr><td colspan="2">Failed to load inventory. Please ensure the server is running.</td></tr>`;
+                }
+            }
+
+            // Fetch and display payments
+            async function loadPayments() {
+                try {
+                    const response = await fetch('http://localhost:5000/api/payments');
+                    const payments = await response.json();
+                    if (paymentsTableBody) paymentsTableBody.innerHTML = '';
+                    if (payments.length === 0) {
+                        if (paymentsTableBody) paymentsTableBody.innerHTML = `<tr><td colspan="3">No payments received yet.</td></tr>`;
+                        return;
+                    }
+                    payments.forEach(payment => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${payment.orderId}</td>
+                            <td>$${payment.total.toFixed(2)}</td>
+                            <td>${payment.paymentMethod}</td>
+                            <td>${new Date(payment.date).toLocaleString()}</td>
+                        `;
+                        if (paymentsTableBody) paymentsTableBody.appendChild(row);
+                    });
+                } catch (error) {
+                    console.error('Failed to fetch payments:', error);
+                    if (paymentsTableBody) paymentsTableBody.innerHTML = `<tr><td colspan="3">Failed to load payments. Please ensure the server is running.</td></tr>`;
+                }
+            }
+
+            // Function to update order status on the backend
+            async function updateOrderStatus(orderId, newStatus) {
+                try {
+                    const response = await fetch(`http://localhost:5000/api/orders/${orderId}/status`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ status: newStatus })
+                    });
+
+                    if (response.ok) {
+                        alert(`Order ${orderId} status updated to ${newStatus}`);
+                        loadOrders(); // Refresh the orders list to show the change
+                    } else {
+                        const errorData = await response.json();
+                        alert(`Error updating order status: ${errorData.msg}`);
+                    }
+                } catch (error) {
+                    console.error('Failed to update order status:', error);
+                    alert('Could not update order status. Please check server.');
+                }
+            }
+        });
+    </script>
+</body>
+</html>

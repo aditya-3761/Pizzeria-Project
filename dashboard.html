@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizzeria - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="navbar-container">
+            <div class="logo">
+                <img src="https://images.unsplash.com/photo-1541592106381-e4f949c65618" alt="Pizzeria Logo">
+                <a href="home.html" class="site-name">Pizzeria</a>
+            </div>
+            <div class="nav-links">
+                <a href="home.html">Home</a>
+                <a href="cart.html">Cart</a>
+                <a href="order.html">Orders</a>
+            </div>
+        </div>
+    </nav>
+    <div class="pizza-grid">
+        <div class="pizza-card" data-pizza-id="1" data-pizza-name="Margherita Pizza" data-pizza-price="12.99" data-pizza-image="pizza1.jpg">
+            <img src="pizza1.jpg" alt="Margherita Pizza">
+            <div class="pizza-card-content">
+                <h3>Margherita Pizza</h3>
+                <p class="pizza-info">Classic Italian pizza with tomato sauce, fresh mozzarella, and basil.</p>
+                <div class="price">$12.99</div>
+                <div class="quantity-selector">
+                    <button class="minus">-</button>
+                    <input type="number" class="quantity-input" value="1" min="1">
+                    <button class="plus">+</button>
+                </div>
+                <button class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+                <button class="btn btn-secondary customize-pizza-btn">Customize Pizza</button>
+            </div>
+        </div>
+
+        <div class="pizza-card" data-pizza-id="2" data-pizza-name="Pepperoni Pizza" data-pizza-price="14.50" data-pizza-image="pizza2.jpg">
+            <img src="pizza2.jpg" alt="Pepperoni Pizza">
+            <div class="pizza-card-content">
+                <h3>Pepperoni Pizza</h3>
+                <p class="pizza-info">A crowd-favorite with spicy pepperoni slices and rich mozzarella.</p>
+                <div class="price">$14.50</div>
+                <div class="quantity-selector">
+                    <button class="minus">-</button>
+                    <input type="number" class="quantity-input" value="1" min="1">
+                    <button class="plus">+</button>
+                </div>
+                <button class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+                <button class="btn btn-secondary customize-pizza-btn">Customize Pizza</button>
+            </div>
+        </div>
+        
+        <div class="pizza-card" data-pizza-id="3" data-pizza-name="Veggie Supreme" data-pizza-price="13.75" data-pizza-image="pizza3.jpg">
+            <img src="pizza3.jpg" alt="Veggie Supreme Pizza">
+            <div class="pizza-card-content">
+                <h3>Veggie Supreme</h3>
+                <p class="pizza-info">Loaded with onions, bell peppers, olives, and fresh tomatoes.</p>
+                <div class="price">$13.75</div>
+                <div class="quantity-selector">
+                    <button class="minus">-</button>
+                    <input type="number" class="quantity-input" value="1" min="1">
+                    <button class="plus">+</button>
+                </div>
+                <button class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+                <button class="btn btn-secondary customize-pizza-btn">Customize Pizza</button>
+            </div>
+        </div>
+        
+        <div class="pizza-card" data-pizza-id="4" data-pizza-name="BBQ Chicken" data-pizza-price="16.25" data-pizza-image="pizza4.jpg">
+            <img src="pizza4.jpg" alt="BBQ Chicken Pizza">
+            <div class="pizza-card-content">
+                <h3>BBQ Chicken</h3>
+                <p class="pizza-info">Savory BBQ chicken, red onions, and a smoky barbecue sauce.</p>
+                <div class="price">$16.25</div>
+                <div class="quantity-selector">
+                    <button class="minus">-</button>
+                    <input type="number" class="quantity-input" value="1" min="1">
+                    <button class="plus">+</button>
+                </div>
+                <button class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+                <button class="btn btn-secondary customize-pizza-btn">Customize Pizza</button>
+            </div>
+        </div>
+
+        <div class="pizza-card" data-pizza-id="5" data-pizza-name="Hawaiian Pizza" data-pizza-price="15.99" data-pizza-image="https://images.unsplash.com/photo-1565299624946-b28f40a6b72d">
+            <img src="https://images.unsplash.com/photo-1565299624946-b28f40a6b72d" alt="Hawaiian Pizza">
+            <div class="pizza-card-content">
+                <h3>Hawaiian Pizza</h3>
+                <p class="pizza-info">A delicious mix of sweet pineapple, ham, and savory mozzarella.</p>
+                <div class="price">$15.99</div>
+                <div class="quantity-selector">
+                    <button class="minus">-</button>
+                    <input type="number" class="quantity-input" value="1" min="1">
+                    <button class="plus">+</button>
+                </div>
+                <button class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+                <button class="btn btn-secondary customize-pizza-btn">Customize Pizza</button>
+            </div>
+        </div>
+
+        <div class="pizza-card" data-pizza-id="6" data-pizza-name="Meat Lovers" data-pizza-price="18.50" data-pizza-image="https://images.unsplash.com/photo-1628840251786-068a25c192d1">
+            <img src="https://images.unsplash.com/photo-1628840251786-068a25c192d1" alt="Meat Lovers Pizza">
+            <div class="pizza-card-content">
+                <h3>Meat Lovers</h3>
+                <p class="pizza-info">Packed with pepperoni, sausage, ham, and bacon for a hearty meal.</p>
+                <div class="price">$18.50</div>
+                <div class="quantity-selector">
+                    <button class="minus">-</button>
+                    <input type="number" class="quantity-input" value="1" min="1">
+                    <button class="plus">+</button>
+                </div>
+                <button class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+                <button class="btn btn-secondary customize-pizza-btn">Customize Pizza</button>
+            </div>
+        </div>
+
+        <div class="pizza-card" data-pizza-id="7" data-pizza-name="Chicken Alfredo" data-pizza-price="17.99" data-pizza-image="https://images.unsplash.com/photo-1563721714131-318e8039d99c">
+            <img src="https://images.unsplash.com/photo-1563721714131-318e8039d99c" alt="Chicken Alfredo Pizza">
+            <div class="pizza-card-content">
+                <h3>Chicken Alfredo</h3>
+                <p class="pizza-info">Creamy Alfredo sauce with grilled chicken, spinach, and mushrooms.</p>
+                <div class="price">$17.99</div>
+                <div class="quantity-selector">
+                    <button class="minus">-</button>
+                    <input type="number" class="quantity-input" value="1" min="1">
+                    <button class="plus">+</button>
+                </div>
+                <button class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+                <button class="btn btn-secondary customize-pizza-btn">Customize Pizza</button>
+            </div>
+        </div>
+
+        <div class="pizza-card" data-pizza-id="8" data-pizza-name="White Pizza" data-pizza-price="14.25" data-pizza-image="https://images.unsplash.com/photo-1627943085526-a60d62057388">
+            <img src="https://images.unsplash.com/photo-1627943085526-a60d62057388" alt="White Pizza">
+            <div class="pizza-card-content">
+                <h3>White Pizza</h3>
+                <p class="pizza-info">A garlic white sauce base topped with ricotta and a blend of cheeses.</p>
+                <div class="price">$14.25</div>
+                <div class="quantity-selector">
+                    <button class="minus">-</button>
+                    <input type="number" class="quantity-input" value="1" min="1">
+                    <button class="plus">+</button>
+                </div>
+                <button class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+                <button class="btn btn-secondary customize-pizza-btn">Customize Pizza</button>
+            </div>
+        </div>
+
+        <div class="pizza-card" data-pizza-id="9" data-pizza-name="Supreme Pizza" data-pizza-price="17.50" data-pizza-image="https://images.unsplash.com/photo-1604382894140-10115e580e61">
+            <img src="https://images.unsplash.com/photo-1604382894140-10115e580e61" alt="Supreme Pizza">
+            <div class="pizza-card-content">
+                <h3>Supreme Pizza</h3>
+                <p class="pizza-info">The ultimate combination: pepperoni, sausage, peppers, onions, and mushrooms.</p>
+                <div class="price">$17.50</div>
+                <div class="quantity-selector">
+                    <button class="minus">-</button>
+                    <input type="number" class="quantity-input" value="1" min="1">
+                    <button class="plus">+</button>
+                </div>
+                <button class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+                <button class="btn btn-secondary customize-pizza-btn">Customize Pizza</button>
+            </div>
+        </div>
+
+        <div class="pizza-card" data-pizza-id="10" data-pizza-name="Four Cheese Pizza" data-pizza-price="13.99" data-pizza-image="https://images.unsplash.com/photo-1557025173-718c1221987d">
+            <img src="https://images.unsplash.com/photo-1557025173-718c1221987d" alt="Four Cheese Pizza">
+            <div class="pizza-card-content">
+                <h3>Four Cheese Pizza</h3>
+                <p class="pizza-info">A simple yet perfect blend of mozzarella, provolone, parmesan, and ricotta.</p>
+                <div class="price">$13.99</div>
+                <div class="quantity-selector">
+                    <button class="minus">-</button>
+                    <input type="number" class="quantity-input" value="1" min="1">
+                    <button class="plus">+</button>
+                </div>
+                <button class="btn btn-primary add-to-cart-btn">Add to Cart</button>
+                <button class="btn btn-secondary customize-pizza-btn">Customize Pizza</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="customization-modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <span class="close-modal-btn">&times;</span>
+            <h2 id="customization-pizza-name">Customize Your Pizza</h2>
+            <div class="customization-form">
+                <input type="hidden" id="custom-base-price">
+                <input type="hidden" id="custom-base-image">
+                <input type="hidden" id="custom-original-pizza-name">
+
+                <div class="form-group">
+                    <h4>Size</h4>
+                    <label><input type="radio" name="pizza-size" value="Small" checked> Small (+$0.00)</label><br>
+                    <label><input type="radio" name="pizza-size" value="Medium"> Medium (+$3.00)</label><br>
+                    <label><input type="radio" name="pizza-size" value="Large"> Large (+$6.00)</label>
+                </div>
+
+                <div class="form-group">
+                    <h4>Veggies <small>(+$0.50 - $1.00 each)</small></h4>
+                    <label><input type="checkbox" name="veggies" value="Onions"> Onions (+$0.50)</label><br>
+                    <label><input type="checkbox" name="veggies" value="Bell Peppers"> Bell Peppers (+$0.75)</label><br>
+                    <label><input type="checkbox" name="veggies" value="Olives"> Olives (+$1.00)</label><br>
+                    <label><input type="checkbox" name="veggies" value="Mushrooms"> Mushrooms (+$1.00)</label><br>
+                    <label><input type="checkbox" name="veggies" value="Tomatoes"> Tomatoes (+$0.50)</label>
+                </div>
+
+                <div class="form-group">
+                    <h4>Spices <small>(+$0.25 each)</small></h4>
+                    <label><input type="checkbox" name="spices" value="Chili Flakes"> Chili Flakes (+$0.25)</label><br>
+                    <label><input type="checkbox" name="spices" value="Oregano"> Oregano (+$0.25)</label>
+                </div>
+
+                <div class="form-group">
+                    <h4>Cheese <small>(+$1.50)</small></h4>
+                    <label><input type="checkbox" name="cheese" value="Extra Cheese"> Extra Cheese (+$1.50)</label>
+                </div>
+
+                <div class="form-group">
+                    <h4>Sauce <small>(+$0.50)</small></h4>
+                    <label><input type="checkbox" name="ketchup" value="Extra Ketchup"> Extra Ketchup (+$0.50)</label>
+                </div>
+
+                <div class="form-group">
+                    <h4>Leaves <small>(+$0.75)</small></h4>
+                    <label><input type="checkbox" name="leaves" value="Basil Leaves"> Basil Leaves (+$0.75)</label>
+                </div>
+
+                <div class="custom-total">
+                    Current Price: <span id="custom-pizza-current-price">$0.00</span>
+                </div>
+                <button class="btn btn-primary" id="add-customized-pizza-to-cart">Add Customized Pizza to Cart</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
