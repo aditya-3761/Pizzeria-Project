@@ -4,61 +4,717 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pizzeria - Home</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --fire: #FF4500; --ember: #FF6B2B; --gold: #FFB347;
+            --cream: #FFF8F0; --dark: #1A0A00; --white: #FFFDF9;
+            --glass-border: rgba(255,160,80,0.2);
+        }
+        html { scroll-behavior: smooth; }
+        body { font-family: 'DM Sans', sans-serif; background: var(--dark); color: var(--cream); overflow-x: hidden; }
+
+        /* ── BG ── */
+        .bg-scene { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+        .bg-gradient {
+            position: absolute; inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 50% 100%, #7a1c00 0%, transparent 70%),
+                radial-gradient(ellipse 50% 40% at 20% 80%, #5a1000 0%, transparent 60%),
+                linear-gradient(170deg, #0d0300 0%, #1a0800 40%, #2a0e00 100%);
+        }
+        .ember { position: absolute; border-radius: 50%; animation: floatEmber linear infinite; }
+        @keyframes floatEmber {
+            0% { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+            10% { opacity: 1; } 80% { opacity: 0.8; }
+            100% { transform: translateY(-100vh) translateX(var(--drift)) scale(0.2); opacity: 0; }
+        }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 200;
+            height: 72px; padding: 0 2rem;
+            display: flex; align-items: center;
+            background: rgba(10,3,0,0.75); backdrop-filter: blur(24px);
+            border-bottom: 1px solid rgba(255,100,40,0.15);
+            animation: slideDown 0.7s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .navbar-container { max-width: 1280px; width: 100%; margin: 0 auto; display: flex; align-items: center; gap: 1.5rem; }
+        .logo { display: flex; align-items: center; gap: 0.6rem; flex-shrink: 0; }
+        .logo img { width: 38px; height: 38px; object-fit: contain; filter: drop-shadow(0 0 10px rgba(255,100,30,0.8)); animation: logoPulse 3s ease-in-out infinite; }
+        @keyframes logoPulse { 0%,100% { filter: drop-shadow(0 0 10px rgba(255,100,30,0.8)); } 50% { filter: drop-shadow(0 0 22px rgba(255,150,50,1)); } }
+        .site-name { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-weight: 900; text-decoration: none; background: linear-gradient(135deg, var(--gold), var(--ember)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+
+        /* Location bar */
+        .location-wrap { flex: 1; max-width: 340px; position: relative; }
+        .location-wrap input {
+            width: 100%; padding: 0.55rem 2.8rem 0.55rem 1rem;
+            background: rgba(255,255,255,0.07); border: 1px solid rgba(255,150,50,0.2);
+            border-radius: 50px; color: var(--white);
+            font-family: 'DM Sans', sans-serif; font-size: 0.85rem; outline: none;
+            transition: all 0.3s;
+        }
+        .location-wrap input::placeholder { color: rgba(255,200,150,0.3); }
+        .location-wrap input:focus { border-color: var(--ember); background: rgba(255,100,30,0.08); box-shadow: 0 0 0 3px rgba(255,100,30,0.1); }
+        .detect-btn {
+            position: absolute; right: 0.6rem; top: 50%; transform: translateY(-50%);
+            background: none; border: none; cursor: pointer; padding: 0.2rem;
+            display: flex; align-items: center; transition: transform 0.2s;
+        }
+        .detect-btn:hover { transform: translateY(-50%) scale(1.2); }
+        .detect-btn svg { width: 18px; height: 18px; fill: var(--ember); }
+
+        /* Location pill shown after detection */
+        .location-pill {
+            display: none; align-items: center; gap: 0.4rem;
+            background: rgba(255,100,30,0.12); border: 1px solid rgba(255,100,30,0.25);
+            border-radius: 50px; padding: 0.4rem 1rem;
+            font-size: 0.82rem; color: var(--gold); white-space: nowrap;
+        }
+        .location-pill.visible { display: flex; }
+
+        .nav-links { display: flex; gap: 0.4rem; align-items: center; flex-shrink: 0; margin-left: auto; }
+        .nav-links a { color: rgba(255,220,180,0.75); text-decoration: none; font-size: 0.88rem; font-weight: 500; padding: 0.45rem 1rem; border-radius: 50px; transition: all 0.3s; position: relative; }
+        .nav-links a::after { content: ''; position: absolute; bottom: 0; left: 50%; right: 50%; height: 2px; background: var(--ember); border-radius: 2px; transition: all 0.3s; }
+        .nav-links a:hover { color: var(--gold); }
+        .nav-links a:hover::after { left: 10%; right: 10%; }
+        .nav-links a.active { background: rgba(255,80,0,0.15); color: var(--gold); border: 1px solid rgba(255,100,30,0.3); }
+        .nav-links a.btn-order {
+            background: linear-gradient(135deg, var(--fire), var(--ember));
+            color: #fff; font-weight: 600; padding: 0.5rem 1.2rem;
+            box-shadow: 0 4px 20px rgba(255,80,0,0.35);
+        }
+        .nav-links a.btn-order::after { display: none; }
+        .nav-links a.btn-order:hover { transform: translateY(-1px); box-shadow: 0 8px 28px rgba(255,80,0,0.5); color: #fff; }
+
+        /* ── HERO ── */
+        .hero {
+            position: relative; z-index: 10;
+            min-height: 100vh;
+            display: grid; grid-template-columns: 1fr 1fr;
+            align-items: center;
+            padding: 100px 4rem 4rem;
+            max-width: 1280px; margin: 0 auto;
+            gap: 3rem;
+        }
+        .hero-content { animation: fadeUp 1s 0.2s cubic-bezier(0.16,1,0.3,1) both; }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: rgba(255,100,30,0.12); border: 1px solid rgba(255,100,30,0.3);
+            border-radius: 50px; padding: 0.4rem 1rem;
+            font-size: 0.78rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+            color: var(--ember); margin-bottom: 1.5rem;
+        }
+        .hero-badge .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ember); animation: blink 1.5s ease-in-out infinite; }
+        @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+        .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(2.8rem, 5vw, 5rem); font-weight: 900; line-height: 1.04; }
+        .hero-title .t1 { display: block; color: var(--white); }
+        .hero-title .t2 { display: block; background: linear-gradient(135deg, var(--fire) 0%, var(--gold) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-style: italic; }
+        .hero-title .t3 { display: block; color: rgba(255,240,220,0.9); font-size: 0.55em; font-weight: 700; font-style: normal; margin-top: 0.3rem; letter-spacing: 0.02em; }
+
+        .hero-desc { margin-top: 1.4rem; font-size: 1rem; color: rgba(255,200,150,0.6); line-height: 1.8; max-width: 420px; }
+
+        .hero-ctas { display: flex; gap: 1rem; margin-top: 2.2rem; flex-wrap: wrap; }
+        .cta-primary {
+            display: inline-flex; align-items: center; gap: 0.6rem;
+            padding: 0.9rem 2rem;
+            background: linear-gradient(135deg, var(--fire), var(--ember), var(--gold));
+            border: none; border-radius: 50px;
+            color: #fff; font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 700;
+            text-decoration: none; cursor: pointer;
+            box-shadow: 0 8px 30px rgba(255,80,0,0.4);
+            transition: all 0.3s; position: relative; overflow: hidden;
+        }
+        .cta-primary::before { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.15); opacity: 0; transition: opacity 0.3s; }
+        .cta-primary:hover { transform: translateY(-3px); box-shadow: 0 16px 40px rgba(255,80,0,0.55); }
+        .cta-primary:hover::before { opacity: 1; }
+        .cta-primary .arrow { transition: transform 0.3s; }
+        .cta-primary:hover .arrow { transform: translateX(4px); }
+
+        .cta-secondary {
+            display: inline-flex; align-items: center; gap: 0.6rem;
+            padding: 0.9rem 1.8rem;
+            background: transparent; border: 1px solid rgba(255,150,50,0.35);
+            border-radius: 50px; color: rgba(255,200,150,0.8);
+            font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 500;
+            text-decoration: none; transition: all 0.3s;
+        }
+        .cta-secondary:hover { background: rgba(255,100,30,0.1); border-color: var(--ember); color: var(--gold); transform: translateY(-2px); }
+
+        /* Stats row */
+        .hero-stats { display: flex; gap: 2rem; margin-top: 2.5rem; flex-wrap: wrap; }
+        .stat { border-left: 2px solid rgba(255,100,30,0.3); padding-left: 1rem; }
+        .stat-num { font-family: 'Playfair Display', serif; font-size: 1.8rem; font-weight: 900; color: var(--gold); line-height: 1; }
+        .stat-label { font-size: 0.78rem; color: rgba(255,200,150,0.45); margin-top: 0.2rem; text-transform: uppercase; letter-spacing: 0.06em; }
+
+        /* Hero image side */
+        .hero-visual { position: relative; display: flex; align-items: center; justify-content: center; animation: fadeUp 1s 0.4s cubic-bezier(0.16,1,0.3,1) both; }
+        .hero-img-wrap { position: relative; width: min(480px, 100%); aspect-ratio: 1; }
+        .hero-img-wrap::before {
+            content: ''; position: absolute; inset: -5%;
+            border-radius: 50%; z-index: 0;
+            background: radial-gradient(circle, rgba(255,80,0,0.22) 0%, transparent 70%);
+            animation: glowPulse 3s ease-in-out infinite;
+        }
+        @keyframes glowPulse { 0%,100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } }
+        .hero-img-wrap::after {
+            content: ''; position: absolute; inset: 2%;
+            border-radius: 50%; border: 1.5px dashed rgba(255,150,50,0.2);
+            animation: spinSlow 30s linear infinite;
+        }
+        @keyframes spinSlow { to { transform: rotate(360deg); } }
+        .hero-img-wrap img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; border: 3px solid rgba(255,150,50,0.2); box-shadow: 0 20px 80px rgba(0,0,0,0.5), 0 0 60px rgba(255,80,0,0.2); }
+
+        /* Floating tags on hero image */
+        .float-tag {
+            position: absolute; z-index: 5;
+            background: rgba(20,8,0,0.9); backdrop-filter: blur(12px);
+            border: 1px solid rgba(255,150,50,0.25); border-radius: 14px;
+            padding: 0.6rem 1rem;
+            display: flex; align-items: center; gap: 0.5rem;
+            font-size: 0.8rem; font-weight: 600; color: var(--cream);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.4);
+            animation: floatTag 4s ease-in-out infinite;
+        }
+        .float-tag:nth-child(2) { top: 10%; right: -2%; animation-delay: 0s; }
+        .float-tag:nth-child(3) { bottom: 15%; left: -4%; animation-delay: 1.5s; }
+        .float-tag:nth-child(4) { top: 55%; right: -8%; animation-delay: 0.8s; }
+        @keyframes floatTag { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        .float-tag .tag-icon { font-size: 1.2rem; }
+        .float-tag .tag-val { font-family: 'Playfair Display', serif; font-size: 1rem; color: var(--gold); }
+
+        /* ── SCROLL INDICATOR ── */
+        .scroll-hint {
+            position: absolute; bottom: 2.5rem; left: 50%; transform: translateX(-50%);
+            z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+            color: rgba(255,200,150,0.3); font-size: 0.72rem; letter-spacing: 0.12em; text-transform: uppercase;
+            animation: fadeIn 1s 1.5s both;
+        }
+        .scroll-mouse { width: 22px; height: 34px; border: 1.5px solid rgba(255,150,50,0.3); border-radius: 12px; display: flex; justify-content: center; padding-top: 5px; }
+        .scroll-dot { width: 4px; height: 8px; background: var(--ember); border-radius: 4px; animation: scrollDot 1.8s ease-in-out infinite; }
+        @keyframes scrollDot { 0%,100% { transform: translateY(0); opacity: 1; } 80% { transform: translateY(10px); opacity: 0; } }
+
+        /* ── SECTION COMMONS ── */
+        section { position: relative; z-index: 10; }
+        .section-tag { font-size: 0.73rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ember); margin-bottom: 0.8rem; display: flex; align-items: center; gap: 0.5rem; }
+        .section-tag::before { content: ''; width: 24px; height: 1.5px; background: var(--ember); }
+        .section-title { font-family: 'Playfair Display', serif; font-size: clamp(1.8rem, 3vw, 2.6rem); font-weight: 900; color: var(--white); }
+        .section-title em { font-style: italic; background: linear-gradient(135deg, var(--fire), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .section-sub { font-size: 0.92rem; color: rgba(255,200,150,0.5); line-height: 1.75; margin-top: 0.6rem; }
+
+        /* ── FEATURES STRIP ── */
+        .features-strip { padding: 0 2rem; margin-bottom: 5rem; }
+        .features-inner { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+        .feat-card {
+            background: rgba(30,10,2,0.6); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,150,50,0.12); border-radius: 20px;
+            padding: 1.6rem 1.4rem;
+            transition: all 0.35s ease;
+            opacity: 0; transform: translateY(30px);
+        }
+        .feat-card.visible { animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) forwards; }
+        .feat-card:hover { border-color: rgba(255,150,50,0.35); transform: translateY(-4px); background: rgba(40,15,3,0.8); box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+        .feat-icon { font-size: 2rem; margin-bottom: 0.8rem; display: block; }
+        .feat-title { font-size: 0.95rem; font-weight: 700; color: var(--gold); margin-bottom: 0.3rem; }
+        .feat-desc { font-size: 0.82rem; color: rgba(255,200,150,0.45); line-height: 1.6; }
+
+        /* ── OUTLETS ── */
+        .outlets-section { padding: 5rem 2rem; }
+        .outlets-inner { max-width: 1280px; margin: 0 auto; }
+        .outlets-header { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 2.5rem; flex-wrap: wrap; gap: 1rem; }
+        .outlets-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.2rem; }
+
+        .outlet-card {
+            background: rgba(30,10,2,0.65); backdrop-filter: blur(20px);
+            border: 1px solid rgba(255,150,50,0.14); border-radius: 22px;
+            padding: 0; overflow: hidden;
+            transition: all 0.35s ease;
+            cursor: pointer;
+            opacity: 0; transform: translateY(30px);
+        }
+        .outlet-card.visible { animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) forwards; }
+        .outlet-card:hover { border-color: rgba(255,150,50,0.4); transform: translateY(-6px); box-shadow: 0 24px 60px rgba(0,0,0,0.4), 0 0 40px rgba(255,80,0,0.08); }
+        .outlet-header { background: linear-gradient(135deg, rgba(255,80,0,0.18), rgba(255,150,50,0.08)); padding: 1.5rem 1.5rem 1rem; position: relative; }
+        .outlet-num { position: absolute; top: 1rem; right: 1.2rem; font-family: 'Playfair Display', serif; font-size: 3rem; font-weight: 900; color: rgba(255,150,50,0.08); line-height: 1; }
+        .outlet-icon { font-size: 2rem; margin-bottom: 0.6rem; display: block; }
+        .outlet-name { font-family: 'Playfair Display', serif; font-size: 1.2rem; font-weight: 700; color: var(--white); }
+        .outlet-body { padding: 1rem 1.5rem 1.5rem; }
+        .outlet-tagline { font-size: 0.83rem; color: rgba(255,200,150,0.5); margin-bottom: 0.8rem; line-height: 1.5; }
+        .outlet-meta { display: flex; flex-direction: column; gap: 0.35rem; }
+        .outlet-meta-item { display: flex; align-items: center; gap: 0.5rem; font-size: 0.78rem; color: rgba(255,200,150,0.4); }
+        .outlet-meta-item span:first-child { font-size: 0.9rem; }
+        .outlet-status { display: inline-flex; align-items: center; gap: 0.35rem; font-size: 0.72rem; font-weight: 600; background: rgba(60,200,80,0.12); border: 1px solid rgba(80,220,100,0.25); border-radius: 50px; padding: 0.2rem 0.7rem; color: #6ee07a; margin-top: 0.8rem; }
+        .outlet-status .dot { width: 5px; height: 5px; border-radius: 50%; background: #6ee07a; animation: blink 1.5s infinite; }
+
+        /* ── HOW IT WORKS ── */
+        .how-section { padding: 5rem 2rem; }
+        .how-inner { max-width: 1280px; margin: 0 auto; }
+        .how-steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; position: relative; margin-top: 3rem; }
+        .how-steps::before { content: ''; position: absolute; top: 36px; left: 12%; right: 12%; height: 1px; background: linear-gradient(90deg, transparent, rgba(255,100,30,0.3), rgba(255,150,50,0.4), rgba(255,100,30,0.3), transparent); z-index: 0; }
+        .how-step { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 0 1rem; position: relative; z-index: 1; opacity: 0; transform: translateY(30px); }
+        .how-step.visible { animation: fadeUp 0.7s cubic-bezier(0.16,1,0.3,1) forwards; }
+        .step-circle { width: 72px; height: 72px; border-radius: 50%; background: linear-gradient(135deg, rgba(255,80,0,0.2), rgba(255,150,50,0.12)); border: 2px solid rgba(255,100,30,0.35); display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin-bottom: 1.2rem; box-shadow: 0 0 30px rgba(255,80,0,0.15); transition: all 0.3s; }
+        .how-step:hover .step-circle { background: linear-gradient(135deg, rgba(255,80,0,0.35), rgba(255,150,50,0.2)); box-shadow: 0 0 40px rgba(255,80,0,0.3); transform: scale(1.1); }
+        .step-num { font-family: 'Playfair Display', serif; font-size: 0.72rem; font-weight: 700; color: var(--ember); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 0.4rem; }
+        .step-title-txt { font-size: 0.97rem; font-weight: 700; color: var(--white); margin-bottom: 0.4rem; }
+        .step-desc { font-size: 0.8rem; color: rgba(255,200,150,0.45); line-height: 1.6; }
+
+        /* ── BANNER CTA ── */
+        .banner-section { padding: 2rem 2rem 6rem; }
+        .banner-inner { max-width: 1280px; margin: 0 auto; }
+        .banner-card {
+            border-radius: 28px;
+            background: linear-gradient(135deg, rgba(255,50,0,0.18) 0%, rgba(255,130,50,0.1) 50%, rgba(255,180,0,0.12) 100%);
+            border: 1px solid rgba(255,150,50,0.25);
+            padding: 3.5rem 3rem;
+            display: flex; align-items: center; justify-content: space-between; gap: 2rem;
+            flex-wrap: wrap;
+            position: relative; overflow: hidden;
+            opacity: 0; transform: translateY(30px);
+        }
+        .banner-card.visible { animation: fadeUp 0.8s cubic-bezier(0.16,1,0.3,1) forwards; }
+        .banner-card::before { content: ''; position: absolute; top: -50%; right: -10%; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle, rgba(255,80,0,0.12) 0%, transparent 70%); pointer-events: none; }
+        .banner-text .banner-title { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 2.5vw, 2.2rem); font-weight: 900; color: var(--white); }
+        .banner-text .banner-title em { font-style: italic; background: linear-gradient(135deg, var(--fire), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .banner-text p { font-size: 0.92rem; color: rgba(255,200,150,0.55); margin-top: 0.5rem; }
+        .banner-actions { display: flex; gap: 1rem; flex-wrap: wrap; }
+
+        /* ── FOOTER ── */
+        footer {
+            position: relative; z-index: 10;
+            border-top: 1px solid rgba(255,100,30,0.12);
+            background: rgba(8,2,0,0.6); backdrop-filter: blur(20px);
+            padding: 3rem 2rem 2rem;
+        }
+        .footer-inner { max-width: 1280px; margin: 0 auto; display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; }
+        .footer-brand .site-name { font-size: 1.4rem; display: block; margin-bottom: 0.8rem; }
+        .footer-brand p { font-size: 0.83rem; color: rgba(255,200,150,0.4); line-height: 1.7; max-width: 240px; }
+        .footer-col h4 { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255,180,100,0.6); margin-bottom: 1rem; }
+        .footer-col a { display: block; font-size: 0.83rem; color: rgba(255,200,150,0.4); text-decoration: none; margin-bottom: 0.5rem; transition: color 0.2s; }
+        .footer-col a:hover { color: var(--gold); }
+        .footer-bottom { max-width: 1280px; margin: 2rem auto 0; padding-top: 1.5rem; border-top: 1px solid rgba(255,100,30,0.08); display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; color: rgba(255,200,150,0.3); flex-wrap: wrap; gap: 0.5rem; }
+
+        /* Toast */
+        .toast-container { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%); z-index: 500; display: flex; flex-direction: column; gap: 0.5rem; align-items: center; }
+        .toast { background: rgba(30,10,2,0.97); border: 1px solid rgba(255,150,50,0.3); border-radius: 12px; padding: 0.8rem 1.4rem; font-size: 0.88rem; color: var(--cream); display: flex; align-items: center; gap: 0.6rem; box-shadow: 0 10px 40px rgba(0,0,0,0.4); white-space: nowrap; animation: toastIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both; }
+        .toast.success { border-color: rgba(80,220,100,0.4); }
+        .toast.error   { border-color: rgba(255,80,80,0.4); }
+        @keyframes toastIn { from { transform: translateY(20px) scale(0.9); opacity: 0; } to { transform: translateY(0) scale(1); opacity: 1; } }
+        @keyframes toastOut { from { opacity: 1; } to { transform: translateY(20px) scale(0.9); opacity: 0; } }
+        @keyframes fadeUp { from { transform: translateY(28px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .features-inner, .outlets-grid { grid-template-columns: repeat(2, 1fr); }
+            .how-steps { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+            .how-steps::before { display: none; }
+            .footer-inner { grid-template-columns: 1fr 1fr; }
+        }
+        @media (max-width: 768px) {
+            .hero { grid-template-columns: 1fr; padding: 90px 1.5rem 3rem; text-align: center; }
+            .hero-desc { margin: 1rem auto 0; }
+            .hero-ctas { justify-content: center; }
+            .hero-stats { justify-content: center; }
+            .hero-visual { order: -1; }
+            .hero-img-wrap { width: min(320px, 90vw); }
+            .float-tag:nth-child(3) { display: none; }
+            .outlets-grid { grid-template-columns: repeat(2, 1fr); }
+            .how-steps { grid-template-columns: 1fr 1fr; }
+            .location-wrap { display: none; }
+            .banner-card { flex-direction: column; text-align: center; }
+            .banner-actions { justify-content: center; }
+        }
+        @media (max-width: 480px) {
+            .features-inner, .outlets-grid, .how-steps { grid-template-columns: 1fr; }
+            .footer-inner { grid-template-columns: 1fr; gap: 1.5rem; }
+            .nav-links a:not(.btn-order):not(.active) { display: none; }
+        }
+    </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-container">
-            <div class="logo">
-                <img src="pizzalogo.png" alt="Pizzeria Logo">
-                <a href="home.html" class="site-name">Pizzeria</a>
+
+<!-- Background -->
+<div class="bg-scene"><div class="bg-gradient"></div></div>
+
+<!-- Navbar -->
+<nav class="navbar">
+    <div class="navbar-container">
+        <div class="logo">
+            <img src="pizzalogo.png" alt="Pizzeria Logo">
+            <a href="home.html" class="site-name">Pizzeria</a>
+        </div>
+
+        <div class="location-wrap" id="location-wrap">
+            <input type="text" id="location-input" placeholder="📍 Enter your location…">
+            <button class="detect-btn" onclick="detectLocation()" title="Detect my location">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+                    <path d="M128,64a44,44,0,1,0,44,44A44,44,0,0,0,128,64Zm0,64a20,20,0,1,1,20-20A20,20,0,0,1,128,128Zm0-104A104,104,0,0,0,24,128c0,42.4,36,96,104,96s104-53.6,104-96A104,104,0,0,0,128,24Zm0,176c-31,0-63.1-27.7-76.3-63.1a88,88,0,0,1,152.6,0C191.1,172.3,159,200,128,200Z"/>
+                </svg>
+            </button>
+        </div>
+        <div class="location-pill" id="location-pill">
+            📍 <span id="location-text">Location</span>
+        </div>
+
+        <div class="nav-links">
+            <a href="home.html" class="active">Home</a>
+            <a href="login.html">Login</a>
+            <a href="registration.html">Register</a>
+            <a href="dashboard.html" class="btn-order">Order Now 🍕</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ── HERO ── -->
+<div style="position:relative;z-index:10;">
+    <div class="hero">
+        <div class="hero-content">
+            <div class="hero-badge"><span class="dot"></span> Now open in 4 cities</div>
+            <h1 class="hero-title">
+                <span class="t1">Handcrafted</span>
+                <span class="t2">Fire-Baked</span>
+                <span class="t3">Pizza made your way — every single time</span>
+            </h1>
+            <p class="hero-desc">Choose every topping, sauce &amp; crust. We stone-bake it fresh and deliver it hot — right to your door.</p>
+            <div class="hero-ctas">
+                <a href="dashboard.html" class="cta-primary">Order Now <span class="arrow">→</span></a>
+                <a href="#outlets" class="cta-secondary">Find Outlets 📍</a>
             </div>
-            <div class="location-container">
-                <div class="location-input-wrapper">
-                    <input type="text" placeholder="Enter your location" class="location-input">
-                    <button class="detect-location-btn" onclick="detectLocation()">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="#FF5722" viewBox="0 0 256 256">
-                            <path d="M128,64a44,44,0,1,0,44,44A44,44,0,0,0,128,64Zm0,64a20,20,0,1,1,20-20A20,20,0,0,1,128,128Zm0-104A104,104,0,0,0,24,128c0,42.4,36,96,104,96s104-53.6,104-96A104,104,0,0,0,128,24Zm0,176c-31,0-63.1-27.7-76.3-63.1a88,88,0,0,1,152.6,0C191.1,172.3,159,200,128,200Z"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-            <div class="nav-links">
-                <a href="home.html">Home</a>
-                <a href="login.html">Login</a>
-                <a href="registration.html">Register</a>
+            <div class="hero-stats">
+                <div class="stat"><div class="stat-num" data-target="50">0</div><div class="stat-label">Toppings to choose</div></div>
+                <div class="stat"><div class="stat-num" data-target="4">0</div><div class="stat-label">City outlets</div></div>
+                <div class="stat"><div class="stat-num" data-target="25">0</div><div class="stat-label">Min delivery</div></div>
             </div>
         </div>
-    </nav>
-    <div class="hero-section">
-        <img src="pizza1.jpg" alt="Delicious Pizza">
-        <div class="hero-text">
-            <h1>Welcome to Pizzeria</h1>
-            <p>The best place to create your perfect custom pizza. Fresh ingredients, incredible taste, and endless options.</p>
-            <a href="login.html" class="btn btn-primary">Order Now</a>
+
+        <div class="hero-visual">
+            <div class="hero-img-wrap">
+                <div class="float-tag"><span class="tag-icon">⭐</span><span>4.9</span> Rating</div>
+                <img src="pizza1.jpg" alt="Delicious Pizza">
+                <div class="float-tag"><span class="tag-icon">🔥</span><span class="tag-val">Hot</span> &amp; Fresh</div>
+                <div class="float-tag"><span class="tag-icon">⚡</span>Express Delivery</div>
+            </div>
         </div>
     </div>
 
-    <div class="outlets-container">
-        <div class="outlet-card">
-            <h3>Delhi Outlet</h3>
-            <p>Serving fresh pizzas daily!</p>
+    <!-- Scroll hint -->
+    <div class="scroll-hint">
+        <div class="scroll-mouse"><div class="scroll-dot"></div></div>
+        <span>Scroll</span>
+    </div>
+</div>
+
+<!-- ── FEATURES STRIP ── -->
+<section class="features-strip">
+    <div class="features-inner">
+        <div class="feat-card">
+            <span class="feat-icon">🍕</span>
+            <div class="feat-title">Custom Builder</div>
+            <div class="feat-desc">50+ toppings, 6 sauces, 4 crusts — fully your call.</div>
         </div>
-        <div class="outlet-card">
-            <h3>Noida Outlet</h3>
-            <p>Find us in Sector 18</p>
+        <div class="feat-card">
+            <span class="feat-icon">🔥</span>
+            <div class="feat-title">Stone Baked</div>
+            <div class="feat-desc">Every pizza is baked in a 400°C wood-fired stone oven.</div>
         </div>
-        <div class="outlet-card">
-            <h3>Ghaziabad Outlet</h3>
-            <p>Your favorite pizza spot</p>
+        <div class="feat-card">
+            <span class="feat-icon">📦</span>
+            <div class="feat-title">Live Tracking</div>
+            <div class="feat-desc">Follow your order from the oven to your door in real time.</div>
         </div>
-        <div class="outlet-card">
-            <h3>Gurgaon Outlet</h3>
-            <p>Pizza, pasta, and more!</p>
+        <div class="feat-card">
+            <span class="feat-icon">🌿</span>
+            <div class="feat-title">Fresh Daily</div>
+            <div class="feat-desc">Ingredients sourced fresh every morning — no compromises.</div>
         </div>
     </div>
+</section>
+
+<!-- ── OUTLETS ── -->
+<section class="outlets-section" id="outlets">
+    <div class="outlets-inner">
+        <div class="outlets-header">
+            <div>
+                <div class="section-tag">Find Us</div>
+                <h2 class="section-title">Our <em>Outlets</em></h2>
+                <p class="section-sub">Dine in or order delivery from your nearest location.</p>
+            </div>
+            <a href="#" class="cta-secondary" style="font-size:0.88rem;padding:0.65rem 1.4rem;">View all on map →</a>
+        </div>
+        <div class="outlets-grid">
+
+            <div class="outlet-card">
+                <div class="outlet-header">
+                    <span class="outlet-num">01</span>
+                    <span class="outlet-icon">🏙️</span>
+                    <div class="outlet-name">Delhi Outlet</div>
+                </div>
+                <div class="outlet-body">
+                    <p class="outlet-tagline">Our flagship — serving fire-baked pizzas daily in the heart of the capital.</p>
+                    <div class="outlet-meta">
+                        <div class="outlet-meta-item"><span>📍</span><span>Connaught Place, New Delhi</span></div>
+                        <div class="outlet-meta-item"><span>🕐</span><span>10:00 AM – 11:00 PM</span></div>
+                        <div class="outlet-meta-item"><span>📞</span><span>+91 98100 00001</span></div>
+                    </div>
+                    <div class="outlet-status"><span class="dot"></span> Open Now</div>
+                </div>
+            </div>
+
+            <div class="outlet-card">
+                <div class="outlet-header">
+                    <span class="outlet-num">02</span>
+                    <span class="outlet-icon">🌆</span>
+                    <div class="outlet-name">Noida Outlet</div>
+                </div>
+                <div class="outlet-body">
+                    <p class="outlet-tagline">Find us in the buzzing Sector 18 market — perfect for a quick slice.</p>
+                    <div class="outlet-meta">
+                        <div class="outlet-meta-item"><span>📍</span><span>Sector 18, Noida</span></div>
+                        <div class="outlet-meta-item"><span>🕐</span><span>11:00 AM – 11:00 PM</span></div>
+                        <div class="outlet-meta-item"><span>📞</span><span>+91 98100 00002</span></div>
+                    </div>
+                    <div class="outlet-status"><span class="dot"></span> Open Now</div>
+                </div>
+            </div>
+
+            <div class="outlet-card">
+                <div class="outlet-header">
+                    <span class="outlet-num">03</span>
+                    <span class="outlet-icon">🏘️</span>
+                    <div class="outlet-name">Ghaziabad Outlet</div>
+                </div>
+                <div class="outlet-body">
+                    <p class="outlet-tagline">Your favourite neighbourhood pizza spot — always fresh, always hot.</p>
+                    <div class="outlet-meta">
+                        <div class="outlet-meta-item"><span>📍</span><span>Indirapuram, Ghaziabad</span></div>
+                        <div class="outlet-meta-item"><span>🕐</span><span>11:00 AM – 10:30 PM</span></div>
+                        <div class="outlet-meta-item"><span>📞</span><span>+91 98100 00003</span></div>
+                    </div>
+                    <div class="outlet-status"><span class="dot"></span> Open Now</div>
+                </div>
+            </div>
+
+            <div class="outlet-card">
+                <div class="outlet-header">
+                    <span class="outlet-num">04</span>
+                    <span class="outlet-icon">🏢</span>
+                    <div class="outlet-name">Gurgaon Outlet</div>
+                </div>
+                <div class="outlet-body">
+                    <p class="outlet-tagline">Pizza, pasta &amp; more — right in the middle of Cyber Hub's energy.</p>
+                    <div class="outlet-meta">
+                        <div class="outlet-meta-item"><span>📍</span><span>Cyber Hub, Gurgaon</span></div>
+                        <div class="outlet-meta-item"><span>🕐</span><span>12:00 PM – 12:00 AM</span></div>
+                        <div class="outlet-meta-item"><span>📞</span><span>+91 98100 00004</span></div>
+                    </div>
+                    <div class="outlet-status"><span class="dot"></span> Open Now</div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ── HOW IT WORKS ── -->
+<section class="how-section">
+    <div class="how-inner">
+        <div style="text-align:center;margin-bottom:0;">
+            <div class="section-tag" style="justify-content:center;">Simple process</div>
+            <h2 class="section-title">How It <em>Works</em></h2>
+            <p class="section-sub" style="max-width:400px;margin:0.5rem auto 0;">Your perfect pizza in 4 easy steps.</p>
+        </div>
+        <div class="how-steps">
+            <div class="how-step">
+                <div class="step-circle">🔐</div>
+                <div class="step-num">Step 01</div>
+                <div class="step-title-txt">Create Account</div>
+                <div class="step-desc">Sign up in seconds and unlock the full custom builder experience.</div>
+            </div>
+            <div class="how-step">
+                <div class="step-circle">🍕</div>
+                <div class="step-num">Step 02</div>
+                <div class="step-title-txt">Build Your Pizza</div>
+                <div class="step-desc">Pick your crust, sauce, cheese and pile on the toppings.</div>
+            </div>
+            <div class="how-step">
+                <div class="step-circle">🔥</div>
+                <div class="step-num">Step 03</div>
+                <div class="step-title-txt">We Bake It</div>
+                <div class="step-desc">Our chefs fire it in a stone oven at 400°C to perfection.</div>
+            </div>
+            <div class="how-step">
+                <div class="step-circle">🚀</div>
+                <div class="step-num">Step 04</div>
+                <div class="step-title-txt">Fast Delivery</div>
+                <div class="step-desc">Track your order live and get it hot at your doorstep.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── BANNER CTA ── -->
+<section class="banner-section">
+    <div class="banner-inner">
+        <div class="banner-card">
+            <div class="banner-text">
+                <h2 class="banner-title">Ready to build your <em>perfect pizza?</em></h2>
+                <p>Join thousands of pizza lovers — sign up and get 20% off your first order.</p>
+            </div>
+            <div class="banner-actions">
+                <a href="registration.html" class="cta-primary">Get Started Free <span class="arrow">→</span></a>
+                <a href="login.html" class="cta-secondary">Log In</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+    <div class="footer-inner">
+        <div class="footer-brand">
+            <a href="home.html" class="site-name">Pizzeria</a>
+            <p>Handcrafted pizzas baked in a stone oven with the freshest ingredients. Delivered fast, eaten hot.</p>
+        </div>
+        <div class="footer-col">
+            <h4>Quick Links</h4>
+            <a href="home.html">Home</a>
+            <a href="dashboard.html">Order Now</a>
+            <a href="#">Locations</a>
+            <a href="#">Menu</a>
+        </div>
+        <div class="footer-col">
+            <h4>Account</h4>
+            <a href="login.html">Login</a>
+            <a href="registration.html">Register</a>
+            <a href="forgot.html">Forgot Password</a>
+        </div>
+        <div class="footer-col">
+            <h4>Contact</h4>
+            <a href="#">hello@pizzeria.in</a>
+            <a href="#">+91 98100 00000</a>
+            <a href="#">Instagram</a>
+            <a href="#">Twitter / X</a>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <span>© 2025 Pizzeria. All rights reserved.</span>
+        <span>Made with 🔥 &amp; 🍕</span>
+    </div>
+</footer>
+
+<!-- Toast -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ── Embers ──
+(function() {
+    const scene = document.querySelector('.bg-scene');
+    const COLORS = ['#FF4500','#FF6B2B','#FFB347','#FF8C00'];
+    for (let i = 0; i < 30; i++) {
+        const e = document.createElement('div');
+        e.className = 'ember';
+        const size = Math.random() * 5 + 2;
+        e.style.cssText = `width:${size}px;height:${size}px;left:${Math.random()*100}%;bottom:${Math.random()*15}%;background:${COLORS[Math.floor(Math.random()*COLORS.length)]};box-shadow:0 0 ${size*2}px currentColor;position:absolute;--drift:${(Math.random()-0.5)*120}px;animation-duration:${Math.random()*8+5}s;animation-delay:${Math.random()*8}s;`;
+        scene.appendChild(e);
+    }
+})();
+
+// ── Toast ──
+function showToast(msg, type='info') {
+    const c = document.getElementById('toast-container');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.innerHTML = (type==='success'?'✅':type==='error'?'❌':'ℹ️') + ' ' + msg;
+    c.appendChild(t);
+    setTimeout(() => { t.style.animation='toastOut 0.35s forwards'; setTimeout(()=>t.remove(),350); }, 3500);
+}
+
+// ── Location detect ──
+function detectLocation() {
+    if (!navigator.geolocation) { showToast('Geolocation not supported.', 'error'); return; }
+    showToast('Detecting your location…', 'info');
+    navigator.geolocation.getCurrentPosition(
+        pos => {
+            const { latitude: lat, longitude: lon } = pos.coords;
+            fetch(`https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`)
+                .then(r => r.json())
+                .then(d => {
+                    const loc = d.address.suburb || d.address.city_district || d.address.city || 'Your Location';
+                    document.getElementById('location-input').value = loc;
+                    document.getElementById('location-text').textContent = loc;
+                    document.getElementById('location-wrap').style.display = 'none';
+                    document.getElementById('location-pill').classList.add('visible');
+                    showToast(`Location set to ${loc}`, 'success');
+                })
+                .catch(() => showToast('Could not get address.', 'error'));
+        },
+        () => showToast('Location access denied.', 'error')
+    );
+}
+
+// Allow typing location manually + pressing Enter
+document.getElementById('location-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && this.value.trim()) {
+        const loc = this.value.trim();
+        document.getElementById('location-text').textContent = loc;
+        document.getElementById('location-wrap').style.display = 'none';
+        document.getElementById('location-pill').classList.add('visible');
+        showToast(`Location set to ${loc}`, 'success');
+    }
+});
+document.getElementById('location-pill').addEventListener('click', function() {
+    this.classList.remove('visible');
+    const wrap = document.getElementById('location-wrap');
+    wrap.style.display = 'block';
+    document.getElementById('location-input').focus();
+});
+
+// ── Counter animation ──
+function animateCounter(el) {
+    const target = parseInt(el.dataset.target);
+    const suffix = el.dataset.target.includes('+') ? '+' : '';
+    let current = 0;
+    const step = Math.ceil(target / 40);
+    const timer = setInterval(() => {
+        current = Math.min(current + step, target);
+        el.textContent = current + suffix;
+        if (current >= target) clearInterval(timer);
+    }, 30);
+}
+
+// ── Intersection observer for scroll animations ──
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+            entry.target.style.animationDelay = (i * 0.1) + 's';
+            entry.target.classList.add('visible');
+            observer.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.feat-card, .outlet-card, .how-step, .banner-card').forEach((el, i) => {
+    el.style.animationDelay = (i * 0.1) + 's';
+    observer.observe(el);
+});
+
+// Counter observer
+const counterObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            animateCounter(entry.target);
+            counterObserver.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.5 });
+document.querySelectorAll('[data-target]').forEach(el => counterObserver.observe(el));
+</script>
+<script src="script.js"></script>
 </body>
 </html>

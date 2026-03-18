@@ -4,102 +4,994 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pizzeria - Login</title>
-    <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --fire: #FF4500;
+            --ember: #FF6B2B;
+            --gold: #FFB347;
+            --cream: #FFF8F0;
+            --dark: #1A0A00;
+            --char: #2C1208;
+            --smoke: #3D2010;
+            --ash: #6B4226;
+            --white: #FFFDF9;
+            --glass: rgba(255,255,255,0.06);
+            --glass-border: rgba(255,160,80,0.2);
+        }
+
+        html, body { height: 100%; overflow-x: hidden; }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--dark);
+            color: var(--cream);
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* ── ANIMATED FIRE BACKGROUND ── */
+        .bg-scene {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .bg-gradient {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 50% 100%, #7a1c00 0%, transparent 70%),
+                radial-gradient(ellipse 50% 40% at 20% 80%, #5a1000 0%, transparent 60%),
+                radial-gradient(ellipse 50% 40% at 80% 90%, #4a0e00 0%, transparent 60%),
+                linear-gradient(170deg, #0d0300 0%, #1a0800 40%, #2a0e00 100%);
+        }
+
+        /* Floating embers */
+        .ember {
+            position: absolute;
+            border-radius: 50%;
+            animation: floatEmber linear infinite;
+            pointer-events: none;
+        }
+        @keyframes floatEmber {
+            0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+            10%  { opacity: 1; }
+            80%  { opacity: 0.8; }
+            100% { transform: translateY(-100vh) translateX(var(--drift)) scale(0.2); opacity: 0; }
+        }
+
+        /* Smoke wisps */
+        .smoke {
+            position: absolute;
+            bottom: 0;
+            width: 3px;
+            background: linear-gradient(to top, rgba(255,120,50,0.15), transparent);
+            animation: smokeRise 6s ease-in infinite;
+            transform-origin: bottom center;
+        }
+        @keyframes smokeRise {
+            0%   { transform: scaleY(0) scaleX(1); opacity: 0; }
+            20%  { opacity: 1; }
+            100% { transform: scaleY(40) scaleX(8); opacity: 0; }
+        }
+
+        /* Pizza slice decorations */
+        .pizza-deco {
+            position: absolute;
+            opacity: 0.04;
+            animation: spinSlow linear infinite;
+        }
+        @keyframes spinSlow { to { transform: rotate(360deg); } }
+
+        /* ── NAVBAR ── */
+        .navbar {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
+            padding: 0 2rem;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            background: rgba(10,3,0,0.7);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,100,40,0.15);
+            animation: slideDown 0.6s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        @keyframes slideDown {
+            from { transform: translateY(-100%); opacity: 0; }
+            to   { transform: translateY(0); opacity: 1; }
+        }
+
+        .navbar-container {
+            max-width: 1200px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            text-decoration: none;
+        }
+        .logo img {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+            filter: drop-shadow(0 0 10px rgba(255,100,30,0.8));
+            animation: pulse 3s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%,100% { filter: drop-shadow(0 0 10px rgba(255,100,30,0.8)); }
+            50%      { filter: drop-shadow(0 0 20px rgba(255,150,50,1)); }
+        }
+        .site-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 900;
+            color: var(--gold);
+            text-decoration: none;
+            letter-spacing: 0.05em;
+            background: linear-gradient(135deg, var(--gold), var(--ember));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .nav-links a {
+            color: rgba(255,220,180,0.75);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            padding: 0.45rem 1rem;
+            border-radius: 50px;
+            letter-spacing: 0.03em;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: 0; left: 50%; right: 50%;
+            height: 2px;
+            background: var(--ember);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+        .nav-links a:hover { color: var(--gold); }
+        .nav-links a:hover::after { left: 10%; right: 10%; }
+        .nav-links a.active {
+            background: rgba(255,80,0,0.15);
+            color: var(--gold);
+            border: 1px solid rgba(255,100,30,0.3);
+        }
+
+        /* ── MAIN LAYOUT ── */
+        .page-wrapper {
+            position: relative;
+            z-index: 10;
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            padding-top: 70px;
+        }
+
+        /* LEFT: Hero Panel */
+        .hero-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 4rem 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-tag {
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.2em;
+            text-transform: uppercase;
+            color: var(--ember);
+            margin-bottom: 1.2rem;
+            animation: fadeUp 0.8s 0.2s cubic-bezier(0.16,1,0.3,1) both;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .hero-tag::before, .hero-tag::after {
+            content: '';
+            width: 30px; height: 1px;
+            background: var(--ember);
+            opacity: 0.6;
+        }
+
+        .hero-title {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 4vw, 4rem);
+            font-weight: 900;
+            line-height: 1.05;
+            text-align: center;
+            animation: fadeUp 0.8s 0.35s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        .hero-title .line1 { display: block; color: var(--white); }
+        .hero-title .line2 {
+            display: block;
+            background: linear-gradient(135deg, var(--fire), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-style: italic;
+        }
+
+        .hero-sub {
+            margin-top: 1.2rem;
+            font-size: 0.95rem;
+            color: rgba(255,200,150,0.65);
+            text-align: center;
+            line-height: 1.7;
+            max-width: 320px;
+            animation: fadeUp 0.8s 0.5s cubic-bezier(0.16,1,0.3,1) both;
+        }
+
+
+
+        .badges {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeUp 0.8s 0.75s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        .badge {
+            background: rgba(255,100,30,0.12);
+            border: 1px solid rgba(255,100,30,0.25);
+            border-radius: 50px;
+            padding: 0.4rem 1rem;
+            font-size: 0.78rem;
+            color: var(--gold);
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        /* RIGHT: Form Panel */
+        .form-panel {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 2rem;
+        }
+
+        .form-card {
+            width: 100%;
+            max-width: 420px;
+            background: rgba(30,10,2,0.7);
+            backdrop-filter: blur(30px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow:
+                0 40px 80px rgba(0,0,0,0.6),
+                0 0 0 1px rgba(255,255,255,0.04) inset,
+                0 1px 0 rgba(255,200,100,0.1) inset;
+            animation: fadeUp 0.9s 0.1s cubic-bezier(0.16,1,0.3,1) both;
+            position: relative;
+            overflow: hidden;
+        }
+        .form-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 20%; right: 20%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--ember), var(--gold), var(--ember), transparent);
+            border-radius: 0 0 2px 2px;
+        }
+
+        .card-header { margin-bottom: 2rem; text-align: center; }
+        .card-icon {
+            width: 56px; height: 56px;
+            background: linear-gradient(135deg, var(--fire), var(--ember));
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            margin: 0 auto 1rem;
+            box-shadow: 0 8px 30px rgba(255,70,0,0.4);
+            animation: iconBounce 0.8s 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+        }
+        @keyframes iconBounce {
+            from { transform: scale(0) rotate(-20deg); opacity: 0; }
+            to   { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        .card-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--white);
+        }
+        .card-subtitle {
+            font-size: 0.83rem;
+            color: rgba(255,200,150,0.5);
+            margin-top: 0.3rem;
+        }
+
+        /* Form elements */
+        .form-group {
+            margin-bottom: 1.3rem;
+            animation: fadeUp 0.6s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        .form-group:nth-child(1) { animation-delay: 0.4s; }
+        .form-group:nth-child(2) { animation-delay: 0.5s; }
+
+        label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 500;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: rgba(255,180,100,0.7);
+            margin-bottom: 0.5rem;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+        .input-icon {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            opacity: 0.5;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        input[type="email"],
+        input[type="password"],
+        input[type="text"] {
+            width: 100%;
+            padding: 0.85rem 1rem 0.85rem 2.8rem;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,150,50,0.2);
+            border-radius: 12px;
+            color: var(--white);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.92rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        input::placeholder { color: rgba(255,200,150,0.25); }
+        input:focus {
+            border-color: var(--ember);
+            background: rgba(255,100,30,0.08);
+            box-shadow: 0 0 0 3px rgba(255,100,30,0.12), 0 0 20px rgba(255,80,0,0.1);
+        }
+        input:focus + .input-icon, /* won't work – icon is before input, using sibling trick */
+        .input-wrap:focus-within .input-icon { opacity: 1; }
+
+        /* Password toggle */
+        .toggle-pw {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: rgba(255,200,150,0.4);
+            font-size: 1rem;
+            transition: color 0.3s;
+            padding: 0;
+            line-height: 1;
+        }
+        .toggle-pw:hover { color: var(--gold); }
+
+        /* Buttons */
+        .btn-primary {
+            width: 100%;
+            padding: 0.95rem;
+            background: linear-gradient(135deg, var(--fire) 0%, var(--ember) 60%, var(--gold) 100%);
+            background-size: 200% 200%;
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            margin-top: 0.5rem;
+            animation: fadeUp 0.6s 0.6s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 35px rgba(255,80,0,0.45);
+        }
+        .btn-primary:hover::before { opacity: 1; }
+        .btn-primary:active { transform: translateY(0); }
+
+        /* Ripple effect */
+        .btn-primary .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.4);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+        @keyframes ripple {
+            to { transform: scale(4); opacity: 0; }
+        }
+
+        /* Loading state */
+        .btn-primary.loading { pointer-events: none; }
+        .btn-primary.loading .btn-text { opacity: 0; }
+        .btn-primary .spinner {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .btn-primary.loading .spinner { opacity: 1; }
+        .spinner-ring {
+            width: 20px; height: 20px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            margin: 1.4rem 0;
+            color: rgba(255,180,100,0.3);
+            font-size: 0.8rem;
+        }
+        .divider::before, .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255,150,50,0.15);
+        }
+
+        .btn-admin {
+            width: 100%;
+            padding: 0.85rem;
+            background: transparent;
+            border: 1px solid rgba(255,150,50,0.3);
+            border-radius: 12px;
+            color: rgba(255,200,150,0.8);
+            font-family: 'DM Sans', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            animation: fadeUp 0.6s 0.7s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        .btn-admin:hover {
+            background: rgba(255,100,30,0.12);
+            border-color: rgba(255,150,50,0.6);
+            color: var(--gold);
+            transform: translateY(-1px);
+        }
+
+        .card-footer {
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 0.83rem;
+            color: rgba(255,200,150,0.4);
+            animation: fadeUp 0.6s 0.8s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        .card-footer a {
+            color: var(--ember);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .card-footer a:hover { color: var(--gold); text-decoration: underline; }
+        .card-footer p { margin: 0.3rem 0; }
+
+        /* ── ADMIN MODAL ── */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(12px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.35s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .modal-content {
+            background: linear-gradient(160deg, #1e0a02, #2a1005);
+            border: 1px solid rgba(255,150,50,0.25);
+            border-radius: 24px;
+            padding: 2.5rem;
+            width: min(90vw, 380px);
+            position: relative;
+            box-shadow: 0 40px 80px rgba(0,0,0,0.7), 0 0 60px rgba(255,80,0,0.1);
+            transform: scale(0.85) translateY(20px);
+            transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s ease;
+            opacity: 0;
+        }
+        .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 25%; right: 25%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--fire), transparent);
+        }
+
+        .modal-header { text-align: center; margin-bottom: 1.8rem; }
+        .modal-icon {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            display: block;
+            animation: iconBounce 0.6s cubic-bezier(0.34,1.56,0.64,1) both;
+        }
+        .modal-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            color: var(--white);
+        }
+        .modal-subtitle {
+            font-size: 0.8rem;
+            color: rgba(255,200,150,0.45);
+            margin-top: 0.2rem;
+        }
+
+        .close-modal-btn {
+            position: absolute;
+            top: 1rem; right: 1.2rem;
+            font-size: 1.4rem;
+            color: rgba(255,200,150,0.4);
+            cursor: pointer;
+            background: none;
+            border: none;
+            line-height: 1;
+            transition: all 0.2s;
+            width: 32px; height: 32px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 8px;
+        }
+        .close-modal-btn:hover {
+            color: var(--gold);
+            background: rgba(255,100,30,0.15);
+            transform: rotate(90deg);
+        }
+
+        /* Toast */
+        .toast-container {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 300;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: center;
+        }
+        .toast {
+            background: rgba(30,10,2,0.95);
+            border: 1px solid rgba(255,150,50,0.3);
+            border-radius: 12px;
+            padding: 0.8rem 1.4rem;
+            font-size: 0.88rem;
+            color: var(--cream);
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+            animation: toastIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+            white-space: nowrap;
+        }
+        .toast.success { border-color: rgba(80,220,100,0.4); }
+        .toast.error   { border-color: rgba(255,80,80,0.4); }
+        @keyframes toastIn {
+            from { transform: translateY(20px) scale(0.9); opacity: 0; }
+            to   { transform: translateY(0) scale(1); opacity: 1; }
+        }
+        @keyframes toastOut {
+            from { transform: translateY(0) scale(1); opacity: 1; }
+            to   { transform: translateY(20px) scale(0.9); opacity: 0; }
+        }
+
+        /* Input error state */
+        .form-group.error input {
+            border-color: rgba(255,80,80,0.6);
+            box-shadow: 0 0 0 3px rgba(255,80,80,0.1);
+        }
+        .error-msg {
+            font-size: 0.75rem;
+            color: #ff6b6b;
+            margin-top: 0.3rem;
+            display: none;
+        }
+        .form-group.error .error-msg { display: block; }
+
+        @keyframes fadeUp {
+            from { transform: translateY(24px); opacity: 0; }
+            to   { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to   { opacity: 1; }
+        }
+
+        /* ── RESPONSIVE ── */
+        @media (max-width: 900px) {
+            .page-wrapper { grid-template-columns: 1fr; }
+            .hero-panel { padding: 3rem 2rem 1rem; }
+            .hero-title { font-size: 2.2rem; }
+            .hero-pizza { width: 160px; height: 160px; }
+        }
+        @media (max-width: 600px) {
+            .nav-links a:not(.active):not(:last-child) { display: none; }
+            .form-card { padding: 2rem 1.5rem; }
+        }
+
+        /* Checkbox for remember me */
+        .remember-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin: 0.3rem 0 1rem;
+            animation: fadeUp 0.6s 0.55s cubic-bezier(0.16,1,0.3,1) both;
+        }
+        .remember-check {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.82rem;
+            color: rgba(255,200,150,0.6);
+            cursor: pointer;
+        }
+        .remember-check input[type="checkbox"] {
+            width: 16px;
+            height: 16px;
+            padding: 0;
+            accent-color: var(--ember);
+            cursor: pointer;
+        }
+        .forgot-link {
+            font-size: 0.82rem;
+            color: var(--ember);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .forgot-link:hover { color: var(--gold); }
+    </style>
 </head>
 <body>
-    <nav class="navbar">
-        <div class="navbar-container">
-            <div class="logo">
-                <img src="pizzalogo.png" alt="Pizzeria Logo">
-                <a href="home.html" class="site-name">Pizzeria</a>
-            </div>
-            <div class="nav-links">
-                <a href="home.html">Home</a>
-                <a href="#">Location</a>
-                <a href="login.html">Login</a>
-                <a href="registration.html">Register</a>
-            </div>
+
+<!-- ── Background Scene ── -->
+<div class="bg-scene">
+    <div class="bg-gradient"></div>
+    <!-- Embers injected by JS -->
+</div>
+
+<!-- ── Navbar ── -->
+<nav class="navbar">
+    <div class="navbar-container">
+        <div class="logo">
+            <img src="pizzalogo.png" alt="Pizzeria Logo">
+            <a href="home.html" class="site-name">Pizzeria</a>
         </div>
-    </nav>
-    <div class="container">
-        <h1>Log In</h1>
-        <form id="login-form">
-            <div class="form-group">
-                <label for="email">Email Address</label>
-                <input type="email" id="email" name="email" required>
-            </div>
-            <div class="form-group">
-                <label for="password">Password</label>
-                <input type="password" id="password" name="password" required>
-            </div>
-            <button type="submit" class="btn btn-primary">Log In</button>
-        </form>
-        <p><a href="forgot.html" class="link">Forgot Password?</a></p>
-        <p>Don't have an account? <a href="registration.html" class="link">Sign Up</a></p>
-        <p><a href="dashboard.html" class="link">Visit without login</a></p>
-        
-        <hr>
-        <button id="admin-login-btn" class="btn btn-secondary">Login as Admin</button>
+        <div class="nav-links">
+            <a href="home.html">Home</a>
+            <a href="#">Location</a>
+            <a href="login.html" class="active">Login</a>
+            <a href="registration.html">Register</a>
+        </div>
+    </div>
+</nav>
+
+<!-- ── Page ── -->
+<div class="page-wrapper">
+    <!-- Left: Hero -->
+    <div class="hero-panel">
+        <div class="hero-tag">Crafted with fire &amp; love</div>
+        <h2 class="hero-title">
+            <span class="line1">Welcome Back to</span>
+            <span class="line2">La Pizzeria</span>
+        </h2>
+        <p class="hero-sub">Sign in to customize your perfect pizza, track orders, and unlock exclusive member deals.</p>
+
+        <div class="badges">
+            <span class="badge">🔥 Stone-baked</span>
+            <span class="badge">🍅 Fresh Daily</span>
+            <span class="badge">🚀 Fast Delivery</span>
+        </div>
     </div>
 
-    <div class="modal-overlay" id="admin-modal-overlay" style="display: none;">
-        <div class="modal-content">
-            <span class="close-modal-btn">&times;</span>
-            <h2>Admin Login</h2>
-            <form id="admin-login-form">
-                <div class="form-group">
-                    <label for="admin-password">Admin Password</label>
-                    <input type="password" id="admin-password" required>
+    <!-- Right: Form -->
+    <div class="form-panel">
+        <div class="form-card">
+            <div class="card-header">
+                <div class="card-icon">🍕</div>
+                <h1 class="card-title">Log In</h1>
+                <p class="card-subtitle">Your pizza awaits</p>
+            </div>
+
+            <form id="login-form" novalidate>
+                <div class="form-group" id="fg-email">
+                    <label for="email">Email Address</label>
+                    <div class="input-wrap">
+                        <span class="input-icon">✉️</span>
+                        <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email">
+                        <span class="input-icon" style="left:auto;right:1rem;font-size:0.75rem;"></span>
+                    </div>
+                    <span class="error-msg">Please enter a valid email address.</span>
                 </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
+
+                <div class="form-group" id="fg-password">
+                    <label for="password">Password</label>
+                    <div class="input-wrap">
+                        <span class="input-icon">🔒</span>
+                        <input type="password" id="password" name="password" placeholder="••••••••" autocomplete="current-password">
+                        <button type="button" class="toggle-pw" id="toggle-pw" title="Show/hide password">👁️</button>
+                    </div>
+                    <span class="error-msg">Password must be at least 6 characters.</span>
+                </div>
+
+                <div class="remember-row">
+                    <label class="remember-check">
+                        <input type="checkbox" id="remember"> Remember me
+                    </label>
+                    <a href="forgot.html" class="forgot-link">Forgot Password?</a>
+                </div>
+
+                <button type="submit" class="btn-primary" id="login-btn">
+                    <span class="btn-text">Log In &nbsp;→</span>
+                    <span class="spinner"><span class="spinner-ring"></span></span>
+                </button>
             </form>
+
+            <div class="divider">or</div>
+
+            <button class="btn-admin" id="admin-login-btn">
+                🛡️ Admin Portal
+            </button>
+
+            <div class="card-footer">
+                <p>Don't have an account? <a href="registration.html">Sign Up</a></p>
+                <p><a href="dashboard.html">Continue without login</a></p>
+            </div>
         </div>
     </div>
-    
-    <script src="script.js"></script>
-    <script>
-        // Admin Login Logic
-        const adminLoginBtn = document.getElementById('admin-login-btn');
-        const adminModalOverlay = document.getElementById('admin-modal-overlay');
-        const adminLoginForm = document.getElementById('admin-login-form');
-        const closeModalBtn = document.querySelector('.close-modal-btn');
-    
-        if (adminLoginBtn) {
-            adminLoginBtn.addEventListener('click', () => {
-                adminModalOverlay.style.display = 'flex';
-            });
+</div>
+
+<!-- ── Admin Modal ── -->
+<div class="modal-overlay" id="admin-modal-overlay">
+    <div class="modal-content">
+        <button class="close-modal-btn" id="close-modal-btn">&times;</button>
+        <div class="modal-header">
+            <span class="modal-icon">🛡️</span>
+            <h2 class="modal-title">Admin Portal</h2>
+            <p class="modal-subtitle">Restricted access — authorize to continue</p>
+        </div>
+        <form id="admin-login-form" novalidate>
+            <div class="form-group" id="fg-admin-pw">
+                <label for="admin-password">Admin Password</label>
+                <div class="input-wrap">
+                    <span class="input-icon">🔑</span>
+                    <input type="password" id="admin-password" placeholder="Enter admin password">
+                    <button type="button" class="toggle-pw" id="toggle-admin-pw">👁️</button>
+                </div>
+                <span class="error-msg">Incorrect password. Please try again.</span>
+            </div>
+            <button type="submit" class="btn-primary" id="admin-submit-btn" style="margin-top:0.5rem;">
+                <span class="btn-text">Authorize &nbsp;→</span>
+                <span class="spinner"><span class="spinner-ring"></span></span>
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- ── Toast Container ── -->
+<div class="toast-container" id="toast-container"></div>
+
+<script>
+// ── Embers ──
+(function spawnEmbers() {
+    const scene = document.querySelector('.bg-scene');
+    const COLORS = ['#FF4500','#FF6B2B','#FFB347','#FF8C00'];
+    for (let i = 0; i < 28; i++) {
+        const e = document.createElement('div');
+        e.className = 'ember';
+        const size = Math.random() * 5 + 2;
+        const left = Math.random() * 100;
+        const dur  = Math.random() * 8 + 5;
+        const delay= Math.random() * 8;
+        const drift= (Math.random() - 0.5) * 120;
+        e.style.cssText = `
+            width:${size}px;height:${size}px;
+            left:${left}%;bottom:${Math.random()*20}%;
+            background:${COLORS[Math.floor(Math.random()*COLORS.length)]};
+            box-shadow:0 0 ${size*2}px currentColor;
+            --drift:${drift}px;
+            animation-duration:${dur}s;
+            animation-delay:${delay}s;
+        `;
+        scene.appendChild(e);
+    }
+    for (let i = 0; i < 10; i++) {
+        const s = document.createElement('div');
+        s.className = 'smoke';
+        s.style.cssText = `left:${Math.random()*100}%;animation-delay:${Math.random()*6}s;animation-duration:${Math.random()*4+4}s;height:${Math.random()*60+40}px;`;
+        scene.appendChild(s);
+    }
+})();
+
+// ── Toast utility ──
+function showToast(msg, type = 'info') {
+    const c = document.getElementById('toast-container');
+    const t = document.createElement('div');
+    t.className = `toast ${type}`;
+    t.innerHTML = (type === 'success' ? '✅' : type === 'error' ? '❌' : 'ℹ️') + ' ' + msg;
+    c.appendChild(t);
+    setTimeout(() => {
+        t.style.animation = 'toastOut 0.35s forwards';
+        setTimeout(() => t.remove(), 350);
+    }, 3200);
+}
+
+// ── Button ripple ──
+document.querySelectorAll('.btn-primary').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        const r = document.createElement('span');
+        r.className = 'ripple';
+        const rect = this.getBoundingClientRect();
+        const size = Math.max(rect.width, rect.height);
+        r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
+        this.appendChild(r);
+        setTimeout(() => r.remove(), 600);
+    });
+});
+
+// ── Password toggle ──
+function setupToggle(toggleId, inputId) {
+    const btn = document.getElementById(toggleId);
+    const inp = document.getElementById(inputId);
+    if (!btn || !inp) return;
+    btn.addEventListener('click', () => {
+        const shown = inp.type === 'text';
+        inp.type = shown ? 'password' : 'text';
+        btn.textContent = shown ? '👁️' : '🙈';
+    });
+}
+setupToggle('toggle-pw', 'password');
+setupToggle('toggle-admin-pw', 'admin-password');
+
+// ── Validation helper ──
+function setError(groupId, show) {
+    document.getElementById(groupId).classList.toggle('error', show);
+}
+
+// ── Login form ──
+document.getElementById('login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
+    let valid = true;
+
+    const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    setError('fg-email', !emailOk);
+    if (!emailOk) valid = false;
+
+    const pwOk = password.length >= 6;
+    setError('fg-password', !pwOk);
+    if (!pwOk) valid = false;
+
+    if (!valid) {
+        showToast('Please fix the errors above.', 'error');
+        return;
+    }
+
+    const btn = document.getElementById('login-btn');
+    btn.classList.add('loading');
+
+    setTimeout(() => {
+        btn.classList.remove('loading');
+        showToast('Login successful! Redirecting…', 'success');
+        setTimeout(() => { window.location.href = 'dashboard.html'; }, 1400);
+    }, 1800);
+});
+
+// ── Clear error on input ──
+['email','password'].forEach(id => {
+    document.getElementById(id).addEventListener('input', function() {
+        const group = this.closest('.form-group');
+        if (group) group.classList.remove('error');
+    });
+});
+
+// ── Admin modal ──
+const overlay = document.getElementById('admin-modal-overlay');
+function openModal()  { overlay.classList.add('active'); document.getElementById('admin-password').focus(); }
+function closeModal() { overlay.classList.remove('active'); }
+
+document.getElementById('admin-login-btn').addEventListener('click', openModal);
+document.getElementById('close-modal-btn').addEventListener('click', closeModal);
+overlay.addEventListener('click', e => { if (e.target === overlay) closeModal(); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ── Admin form ──
+document.getElementById('admin-login-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const password = document.getElementById('admin-password').value;
+    const ADMIN_PASSWORD = '6870';
+    const btn = document.getElementById('admin-submit-btn');
+    btn.classList.add('loading');
+
+    setTimeout(() => {
+        btn.classList.remove('loading');
+        if (password === ADMIN_PASSWORD) {
+            showToast('Admin access granted!', 'success');
+            setTimeout(() => { window.location.href = 'admin.html'; }, 1000);
+        } else {
+            setError('fg-admin-pw', true);
+            showToast('Incorrect admin password.', 'error');
+            document.getElementById('admin-password').value = '';
+            document.getElementById('admin-password').focus();
         }
-    
-        if (adminModalOverlay) {
-            adminModalOverlay.addEventListener('click', (e) => {
-                if (e.target === adminModalOverlay || e.target.closest('.close-modal-btn')) {
-                    adminModalOverlay.style.display = 'none';
-                }
-            });
-        }
-        
-        if (adminLoginForm) {
-            adminLoginForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const password = document.getElementById('admin-password').value;
-                const ADMIN_PASSWORD = '6870';
-                
-                if (password === ADMIN_PASSWORD) {
-                    alert('Admin login successful!');
-                    window.location.href = 'admin.html';
-                } else {
-                    alert('Invalid Password!');
-                }
-            });
-        }
-        if(closeModalBtn){
-             closeModalBtn.addEventListener('click', () => {
-                adminModalOverlay.style.display = 'none';
-             })
-        }
-    </script>
+    }, 1000);
+});
+
+document.getElementById('admin-password').addEventListener('input', function() {
+    document.getElementById('fg-admin-pw').classList.remove('error');
+});
+</script>
+<script src="script.js"></script>
 </body>
 </html>
