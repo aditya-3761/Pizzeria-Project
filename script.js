@@ -3,7 +3,7 @@
  * Auth guards on all protected pages | Address form | Email confirmation
  */
 
-const API = 'http://localhost:5000/api';
+const API = 'https://YOUR-RAILWAY-URL.up.railway.app/api';
 
 // ── AUTH ──────────────────────────────────────────────────────────────────
 const Auth = {
