@@ -10,14 +10,11 @@ connectDB();
 const app = express();
 
 // ── CORS ──
+// ── CORS ──
 app.use(cors({
   origin: function(origin, callback) {
-    // Allow all localhost and 127.0.0.1 origins regardless of port
-    if (!origin || origin.includes('localhost') || origin.includes('127.0.0.1') || origin.includes('null')) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
+    // Allow all origins in production
+    callback(null, true);
   },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
