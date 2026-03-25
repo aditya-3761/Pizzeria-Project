@@ -2,7 +2,7 @@ const express    = require('express');
 const cors       = require('cors');
 const dotenv     = require('dotenv');
 const rateLimit  = require('express-rate-limit');
-const connectDB  = require('./config/db');
+const connectDB  = require('../config/db');
 
 dotenv.config();
 connectDB();
@@ -40,13 +40,13 @@ const authLimiter = rateLimit({
 });
 
 // ── ROUTES ──
-app.use('/api/auth',      authLimiter, require('./routes/auth'));
-app.use('/api/pizzas',    require('./routes/pizza'));
-app.use('/api/orders',    require('./routes/order'));
-app.use('/api/payments',  require('./routes/payment'));
-app.use('/api/inventory', require('./routes/inventory'));
-app.use('/api/admin',     require('./routes/admin'));
-app.use('/api/user',      require('./routes/user'));
+app.use('/api/auth',      authLimiter, require('../routes/auth'));
+app.use('/api/pizzas',    require('../routes/pizza'));
+app.use('/api/orders',    require('../routes/order'));
+app.use('/api/payments',  require('../routes/payment'));
+app.use('/api/inventory', require('../routes/inventory'));
+app.use('/api/admin',     require('../routes/admin'));
+app.use('/api/user',      require('../routes/user'));
 
 // ── HEALTH CHECK ──
 app.get('/api/health', (req, res) => {
@@ -69,8 +69,9 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`\n🍕 Pizzeria Server running on port ${PORT}`);
-  console.log(`📦 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`🗄️  MongoDB: Connected`);
-});
+// app.listen(PORT, '0.0.0.0', () => {
+//   console.log(`\n🍕 Pizzeria Server running on port ${PORT}`);
+//   console.log(`📦 Environment: ${process.env.NODE_ENV || 'development'}`);
+//   console.log(`🗄️  MongoDB: Connected`);
+// });
+module.exports = app;
