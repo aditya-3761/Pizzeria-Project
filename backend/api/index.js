@@ -5,7 +5,16 @@ const rateLimit  = require('express-rate-limit');
 const connectDB  = require('../config/db');
 
 dotenv.config();
-connectDB();
+// connectDB();
+let isConnected = false;
+
+const connectDBOnce = async () => {
+  if (!isConnected) {
+    await connectDB();
+    isConnected = true;
+    console.log("✅ MongoDB Connected (once)");
+  }
+};
 
 const app = express();
 
@@ -39,6 +48,12 @@ const authLimiter = rateLimit({
   message: { msg: 'Too many auth attempts, please wait 15 minutes.' }
 });
 
+// --- middlewares ---
+app.use(async (req, res, next) => {
+  await connectDBOnce();
+  next();
+});
+
 // ── ROUTES ──
 app.use('/api/auth',      authLimiter, require('../routes/auth'));
 app.use('/api/pizzas',    require('../routes/pizza'));
@@ -69,6 +84,7 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 3000;
+
 // app.listen(PORT, '0.0.0.0', () => {
 //   console.log(`\n🍕 Pizzeria Server running on port ${PORT}`);
 //   console.log(`📦 Environment: ${process.env.NODE_ENV || 'development'}`);
